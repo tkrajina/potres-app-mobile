@@ -17,7 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+        "buildNumber": "0.0.2",
+        "bundleIdentifier": "hr.scio.potres2020",
+        "config": {
+            "usesNonExemptEncryption": false
+        },
+        "infoPlist": {
+            "NSLocationWhenInUseUsageDescription": "This application uses your location to help volunteers in the earthquake area (Glinja/Petrinja)."
+        },
+        "supportsTablet": false
     },
     "android": {
       "config": {
