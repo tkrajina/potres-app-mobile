@@ -1,5 +1,5 @@
 import { default as React } from "react";
-import { Image, Linking, ScrollView, Share, Text, View } from "react-native";
+import { Button, Image, Linking, ScrollView, Share, Text, TouchableHighlightBase, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { SHARE_24PX } from "../images_generated";
 import { Entity } from "../models/entities";
@@ -26,6 +26,10 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
     } catch (e) {
       Toasts.error("Error opening dialer");
     }
+  }
+
+  callbackOnMore() {
+    this.setState({ short: !this.state.short })
   }
 
   render() {
@@ -76,6 +80,9 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           </React.Fragment>)}
         </React.Fragment>}
         */}
+          <TouchableOpacity onPress={this.callbackOnMore}>
+            <Text style={{color: "brown"}}>{this.state.short ? "Show more" : "Show less"}</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );
