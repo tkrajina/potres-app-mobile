@@ -46,25 +46,27 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
       <View>
         {!!(this.state.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
           <Modal>
-            <MapView
-              mapType="standard"
-              zoomTapEnabled
-              zoomControlEnabled
-              zoomEnabled
-              showsMyLocationButton={true}
-              showsUserLocation={true}
-              //followsUserLocation={true}
-              style={{ flex: 1 }}
-              initialRegion={{
-                latitude: this.props.entity.locationLat || 0,
-                longitude: this.props.entity.locationLon || 0,
-                latitudeDelta: 1,
-                longitudeDelta: 1,
-              }}
-            >
-              <Marker key={`aidreq_${this.props.entity.id}`} coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon } as LatLng} pinColor={"red"} />
-            </MapView>
-            <Button title="Zatvori" onPress={this.callbackOnMap} />
+            <View style={{flex: 1, marginHorizontal: 10, marginVertical: 50, borderColor: "black", borderWidth: 2}}>
+              <MapView
+                mapType="standard"
+                zoomTapEnabled
+                zoomControlEnabled
+                zoomEnabled
+                showsMyLocationButton={true}
+                showsUserLocation={true}
+                //followsUserLocation={true}
+                style={{ flex: 1 }}
+                initialRegion={{
+                  latitude: this.props.entity.locationLat || 0,
+                  longitude: this.props.entity.locationLon || 0,
+                  latitudeDelta: 1,
+                  longitudeDelta: 1,
+                }}
+              >
+                <Marker key={`aidreq_${this.props.entity.id}`} coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon } as LatLng} pinColor={"red"} />
+              </MapView>
+              <Button title="Zatvori" onPress={this.callbackOnMap} />
+            </View>
           </Modal>
         )}
         <View style={{ flexDirection: "column", margin: 10 }}>
