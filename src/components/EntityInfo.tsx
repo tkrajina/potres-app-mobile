@@ -1,11 +1,12 @@
 import { default as React } from "react";
-import { Image, Linking, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
+import { Alert, Image, Linking, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { SHARE_24PX } from "../images_generated";
+import { CONTENT_COPY_24PX } from "../images_generated";
 import { Entity } from "../models/entities";
 import { EntityType } from "../screens/common";
 import * as Toasts from "../utils/toasts";
 import * as Utils from "../utils/utils";
+import Clipboard from 'expo-clipboard';
 
 interface EntityInfoProps {
   entity: Entity;
@@ -39,14 +40,14 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
       <ScrollView>
         <View style={{ flexDirection: "column", margin: 10 }}>
           <Text style={{ fontSize: 12 }}>Opis:</Text>
-          <ShareableText text={this.state.short ? this.props.entity.description?.substr(0, 50) + "..." : this.props.entity.description} entity={this.props.entity} />
+          <ClipboardParams text={this.state.short ? this.props.entity.description?.substr(0, 50) + "..." : this.props.entity.description} entity={this.props.entity} />
 
           <Field label="Contact">
-            <ShareableText text={this.props.entity.contact_name || "-"} />
+            <ClipboardParams text={this.props.entity.contact_name || "-"} />
           </Field>
 
           <Field label="Kontakt telefon">
-            <ShareableText text={this.props.entity.contact_phone || "-"} onTextClick={this.callbackOnPhone} />
+            <ClipboardParams text={this.props.entity.contact_phone || "-"} onTextClick={this.callbackOnPhone} />
           </Field>
 
           <Field label="Dobrovoljac">
@@ -63,12 +64,12 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
 
           {!!this.props.entity.tags && (
             <Field label="Tagovi">
-              <ShareableText text={this.props.entity.contact_phone} />
+              <ClipboardParams text={this.props.entity.contact_phone} />
             </Field>
           )}
 
           <Field label="Unešeno">
-            <ShareableText text={this.props.entity.created_at || "-"} />
+            <ClipboardParams text={this.props.entity.created_at || "-"} />
           </Field>
 
           {!this.state.short && <React.Fragment>
@@ -83,7 +84,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
             </Field>
 
             <Field label="Bilješke">
-              <ShareableText text={(this.props.entity as any)?.notes} />
+              <ClipboardParams text={(this.props.entity as any)?.notes} />
             </Field>
 
             <Field label="Izmijenjeno">
@@ -110,22 +111,21 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
   }
 }
 
-interface ShareableTextProps {
+interface ClipboardTextParams {
   text: string;
   entity?: Entity;
   onTextClick?: () => void;
 }
-class ShareableTextState {}
-class ShareableText extends React.Component<ShareableTextProps, ShareableTextState> {
-  constructor(props: ShareableTextProps) {
+class ClipboardParams extends React.PureComponent<ClipboardTextParams> {
+  constructor(props: ClipboardTextParams) {
     super(props);
-    this.state = new ShareableTextState();
     Utils.bindAllPrefixedMethods(this);
   }
 
   async callbackOnShare() {
     try {
-      await Share.share({ message: this.props.text })
+      Clipboard.setString(this.props.text);
+      Alert.alert("Kopirano");
     } catch (e) {
       console.error(e);
       Toasts.error("Error sharing");
@@ -162,7 +162,7 @@ class ShareableText extends React.Component<ShareableTextProps, ShareableTextSta
       </View>
       <View style={{width: 30, flexDirection: "column"}}>
         <TouchableOpacity onPress={this.callbackOnShare}>
-          <Image style={{opacity: 0.5, marginHorizontal: 5}} source={SHARE_24PX} />
+          <Image style={{opacity: 0.5, marginHorizontal: 5}} source={CONTENT_COPY_24PX} />
         </TouchableOpacity>
       </View>
     </View>
