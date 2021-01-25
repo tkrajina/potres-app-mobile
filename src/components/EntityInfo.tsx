@@ -1,5 +1,5 @@
 import { default as React } from "react";
-import { Alert, Image, Linking, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
+import { Alert, Button, Image, Linking, Modal, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CONTENT_COPY_24PX } from "../images_generated";
 import { Entity } from "../models/entities";
@@ -11,10 +11,10 @@ import MapView, { LatLng, Marker, Polygon } from "react-native-maps";
 
 interface EntityInfoProps {
   entity: Entity;
-  showMap: boolean;
 }
 class EntityInfoState {
   short: boolean = true;
+  showMap: boolean = false;
 }
 export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoState> {
   constructor(props: EntityInfoProps) {
@@ -35,11 +35,38 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
     this.setState({ short: !this.state.short });
   }
 
+  callbackOnMap() {
+    this.setState({ showMap: !this.state.showMap });
+  }
+
   render() {
     const start = (this.props.entity as any)?.startdate || "";
     const end = (this.props.entity as any)?.enddate || "";
     return (
-      <ScrollView>
+      <View>
+        {!!(this.state.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
+          <Modal>
+            <MapView
+              mapType="standard"
+              zoomTapEnabled
+              zoomControlEnabled
+              zoomEnabled
+              showsMyLocationButton={true}
+              showsUserLocation={true}
+              //followsUserLocation={true}
+              style={{ flex: 1 }}
+              initialRegion={{
+                latitude: this.props.entity.locationLat || 0,
+                longitude: this.props.entity.locationLon || 0,
+                latitudeDelta: 1,
+                longitudeDelta: 1,
+              }}
+            >
+              <Marker key={`aidreq_${this.props.entity.id}`} coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon } as LatLng} pinColor={"red"} />
+            </MapView>
+            <Button title="Zatvori" onPress={this.callbackOnMap} />
+          </Modal>
+        )}
         <View style={{ flexDirection: "column", margin: 10 }}>
           <Text style={{ fontSize: 12 }}>Opis:</Text>
           <ClipboardParams text={this.state.short ? this.props.entity.description?.substr(0, 50) + "..." : this.props.entity.description} entity={this.props.entity} />
@@ -91,31 +118,6 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
               <Field label="Izmijenjeno">
                 <Text style={STYLES.bold}>{this.props.entity.updated_at}</Text>
               </Field>
-
-              {!!(this.props.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
-                <MapView
-                  mapType="standard"
-                  zoomTapEnabled
-                  zoomControlEnabled
-                  zoomEnabled
-                  showsMyLocationButton={true}
-                  showsUserLocation={true}
-                  //followsUserLocation={true}
-                  style={{ height: 200 }}
-                  initialRegion={{
-                    latitude: (this.props.entity.locationLat || 0),
-                    longitude: (this.props.entity.locationLon || 0),
-                    latitudeDelta: 1,
-                    longitudeDelta: 1,
-                  }}
-                >
-                  <Marker
-                    key={`aidreq_${this.props.entity.id}`}
-                    coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon, } as LatLng}
-                    pinColor={"red"}
-                  />
-                </MapView>
-              )}
             </React.Fragment>
           )}
 
@@ -132,8 +134,13 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           <TouchableOpacity onPress={this.callbackOnMore}>
             <Text style={{ color: "brown" }}>{this.state.short ? "Show more" : "Show less"}</Text>
           </TouchableOpacity>
+          {this.props.entity.locationLat && this.props.entity.locationLon && (
+            <TouchableOpacity onPress={this.callbackOnMap}>
+              <Text style={{ color: "brown" }}>Prikaži kartu</Text>
+            </TouchableOpacity>
+          )}
         </View>
-      </ScrollView>
+      </View>
     );
   }
 }
