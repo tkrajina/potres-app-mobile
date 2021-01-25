@@ -2,7 +2,7 @@
   "expo": {
     "name": "Potres.app",
     "slug": "potres2020-app",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,7 +17,7 @@
       "**/*"
     ],
     "ios": {
-        "buildNumber": "0.0.2",
+        "buildNumber": "0.0.3",
         "bundleIdentifier": "hr.scio.potres2020",
         "config": {
             "usesNonExemptEncryption": false
@@ -43,7 +43,7 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
       ],
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
