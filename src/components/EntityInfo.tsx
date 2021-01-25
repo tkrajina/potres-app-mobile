@@ -1,5 +1,5 @@
 import { default as React } from "react";
-import { Button, Image, Linking, ScrollView, Share, Text, TouchableHighlightBase, View } from "react-native";
+import { Image, Linking, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { SHARE_24PX } from "../images_generated";
 import { Entity } from "../models/entities";
@@ -33,53 +33,74 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
   }
 
   render() {
+    const start = (this.props.entity as any)?.startdate || "";
+    const end = (this.props.entity as any)?.enddate || "";
     return (
       <ScrollView>
         <View style={{ flexDirection: "column", margin: 10 }}>
           <Text style={{ fontSize: 12 }}>Opis:</Text>
           <ShareableText text={this.state.short ? this.props.entity.description?.substr(0, 50) + "..." : this.props.entity.description} entity={this.props.entity} />
 
-          {!!this.props.entity.contact_name && (
-            <React.Fragment>
-              <View style={{ margin: 5 }}></View>
-              <Text style={{ fontSize: 12 }}>Contact:</Text>
-              <ShareableText text={this.props.entity.contact_name} />
-            </React.Fragment>
-          )}
+          <Field label="Contact">
+            <ShareableText text={this.props.entity.contact_name || "-"} />
+          </Field>
 
-          {!!this.props.entity.contact_phone && (
-            <React.Fragment>
-              <View style={{ margin: 5 }}></View>
-              <Text style={{ fontSize: 12 }}>Kontakt telefon:</Text>
-              <ShareableText text={this.props.entity.contact_phone} onTextClick={this.callbackOnPhone} />
-            </React.Fragment>
-          )}
+          <Field label="Kontakt telefon">
+            <ShareableText text={this.props.entity.contact_phone || "-"} onTextClick={this.callbackOnPhone} />
+          </Field>
+
+          <Field label="Dobrovoljac">
+            <Text style={STYLES.bold}>
+              {(this.props.entity as any)?.volunteer_assigned || "?"}
+            </Text>
+          </Field>
+
+          <Field label="Dobrovoljac označio kao završeno">
+            <Text style={STYLES.bold}>
+              {this.props.entity.volunteerMarkedAsDone || "-"}
+            </Text>
+          </Field>
 
           {!!this.props.entity.tags && (
-            <React.Fragment>
-              <View style={{ margin: 5 }}></View>
-              <Text style={{ fontSize: 12 }}>Tagovi:</Text>
+            <Field label="Tagovi">
               <ShareableText text={this.props.entity.contact_phone} />
-            </React.Fragment>
+            </Field>
           )}
 
-          {!!this.props.entity.created_at && (
-            <React.Fragment>
-              <View style={{ margin: 5 }}></View>
-              <Text style={{ fontSize: 12 }}>Unešeno:</Text>
-              <ShareableText text={this.props.entity.created_at} />
-            </React.Fragment>
-          )}
+          <Field label="Unešeno">
+            <ShareableText text={this.props.entity.created_at || "-"} />
+          </Field>
+
+          {!this.state.short && <React.Fragment>
+            {!!(start && end) && 
+              <Field label="Početak-kraj:">
+                <Text style={STYLES.bold}>{start} - {end}</Text>
+              </Field>
+            }
+
+            <Field label="Dispecher">
+                <Text style={STYLES.bold}>{this.props.entity.assigned_dispatcher || "-"}</Text>
+            </Field>
+
+            <Field label="Bilješke">
+              <ShareableText text={(this.props.entity as any)?.notes} />
+            </Field>
+
+            <Field label="Izmijenjeno">
+              <Text style={STYLES.bold}>{this.props.entity.updated_at}</Text>
+            </Field>
+          </React.Fragment>}
 
           {/*
-        {!!this.props.entity.comments && <React.Fragment>
-          <View style={{margin: 5}}></View>
-          {this.props.entity.comments?.map((comment, index) => <React.Fragment>
-            <Text style={{fontSize: 12}}>Comment #{index+1}:</Text>
-            <Text style={{fontWeight: "bold"}} selectable>{comment}</Text>
-          </React.Fragment>)}
-        </React.Fragment>}
-        */}
+          {!!this.props.entity.comments && <React.Fragment>
+            <View style={{margin: 5}}></View>
+            {this.props.entity.comments?.map((comment, index) => <React.Fragment>
+              <Text style={{fontSize: 12}}>Comment #{index+1}:</Text>
+              <Text style={{fontWeight: "bold"}} selectable>{comment}</Text>
+            </React.Fragment>)}
+          </React.Fragment>}
+          */}
+
           <TouchableOpacity onPress={this.callbackOnMore}>
             <Text style={{color: "brown"}}>{this.state.short ? "Show more" : "Show less"}</Text>
           </TouchableOpacity>
@@ -147,3 +168,26 @@ class ShareableText extends React.Component<ShareableTextProps, ShareableTextSta
     </View>
   }
 }
+
+interface FieldProps {
+  label: string;
+}
+class Field extends React.PureComponent<FieldProps> {
+
+    constructor(props: FieldProps) {
+        super(props);
+    }
+
+    render() {
+      return (
+            <React.Fragment>
+              <View style={{ margin: 5 }}></View>
+              <Text style={{ fontSize: 12 }}>{this.props.label}:</Text>
+              {this.props.children}
+            </React.Fragment>);
+      }
+}
+
+const STYLES = StyleSheet.create({
+  bold: { fontWeight: "bold" } as TextStyle
+})
