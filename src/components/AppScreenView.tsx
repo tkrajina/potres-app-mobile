@@ -79,7 +79,7 @@ export class AppScreenView extends React.Component<AppScreenViewProps, AppScreen
             },
           ]}
         >
-          <Image source={require("../../assets/in_app_icon.png")} style={{width: 45, height: 45}} />
+          <Image source={require("../../assets/in_app_icon.png")} style={{ width: 45, height: 45 }} />
           <Text
             style={{
               marginTop: 10,

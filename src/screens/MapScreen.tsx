@@ -97,7 +97,7 @@ export default class MapScreen extends React.Component<ScreenProps, State> {
         </View>
         {this.state.selected && (
           <View style={STYLES.flexHalf}>
-            <EntityInfo entity={this.state.selected} />
+            <EntityInfo entity={this.state.selected} showMap={false} />
             <Button title="Close" onPress={this.callbackOnCloseEntityInfo} />
           </View>
         )}

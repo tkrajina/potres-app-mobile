@@ -61,7 +61,7 @@ export class RootStore {
 
   sortAndFillType(type: EntityType, e: Entity[]) {
     const backupDate = "2000-01-01T00:00:00.000Z";
-    e.map(i => i.type = type);
+    e.map((i) => (i.type = type));
     return (e || []).sort((e1, e2) => -(e1.created_at || backupDate).localeCompare(e2.created_at || backupDate));
   }
 

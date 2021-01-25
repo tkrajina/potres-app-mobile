@@ -86,11 +86,17 @@ export default class SearchScreen extends React.Component<ScreenProps, State> {
     return (
       <AppScreenView navigation={this.props.navigation} title="Pretraživanje">
         <View style={{ flex: 1 }}>
-          <FlatList onScrollToIndexFailed={() => {}} data={this.state.entities} renderItem={(e) => <React.Fragment>
-            {e.index > 0 && <HorizontalLine />}
-            <EntityInfo entity={e.item as Entity} />
-          </React.Fragment>
-          } keyExtractor={(e, _index) => "" + e.id} />
+          <FlatList
+            onScrollToIndexFailed={() => {}}
+            data={this.state.entities}
+            renderItem={(e) => (
+              <React.Fragment>
+                {e.index > 0 && <HorizontalLine />}
+                <EntityInfo entity={e.item as Entity} showMap={true} />
+              </React.Fragment>
+            )}
+            keyExtractor={(e, _index) => "" + e.id}
+          />
           <View style={{ height: 50, flexDirection: "row", alignContent: "center", alignItems: "center" }}>
             {Object.keys(EntityType).map((e) => this.renderEntityButton((EntityType as any)[e] as EntityType))}
           </View>

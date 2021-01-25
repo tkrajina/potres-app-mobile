@@ -6,10 +6,12 @@ import { Entity } from "../models/entities";
 import { EntityType } from "../screens/common";
 import * as Toasts from "../utils/toasts";
 import * as Utils from "../utils/utils";
-import Clipboard from 'expo-clipboard';
+import Clipboard from "expo-clipboard";
+import MapView, { LatLng, Marker, Polygon } from "react-native-maps";
 
 interface EntityInfoProps {
   entity: Entity;
+  showMap: boolean;
 }
 class EntityInfoState {
   short: boolean = true;
@@ -30,7 +32,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
   }
 
   callbackOnMore() {
-    this.setState({ short: !this.state.short })
+    this.setState({ short: !this.state.short });
   }
 
   render() {
@@ -51,15 +53,11 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           </Field>
 
           <Field label="Dobrovoljac">
-            <Text style={STYLES.bold}>
-              {(this.props.entity as any)?.volunteer_assigned || "?"}
-            </Text>
+            <Text style={STYLES.bold}>{(this.props.entity as any)?.volunteer_assigned || "?"}</Text>
           </Field>
 
           <Field label="Dobrovoljac označio kao završeno">
-            <Text style={STYLES.bold}>
-              {this.props.entity.volunteerMarkedAsDone || "-"}
-            </Text>
+            <Text style={STYLES.bold}>{this.props.entity.volunteerMarkedAsDone || "-"}</Text>
           </Field>
 
           {!!this.props.entity.tags && (
@@ -72,25 +70,54 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
             <ClipboardParams text={this.props.entity.created_at || "-"} />
           </Field>
 
-          {!this.state.short && <React.Fragment>
-            {!!(start && end) && 
-              <Field label="Početak-kraj:">
-                <Text style={STYLES.bold}>{start} - {end}</Text>
-              </Field>
-            }
+          {!this.state.short && (
+            <React.Fragment>
+              {!!(start && end) && (
+                <Field label="Početak-kraj:">
+                  <Text style={STYLES.bold}>
+                    {start} - {end}
+                  </Text>
+                </Field>
+              )}
 
-            <Field label="Dispecher">
+              <Field label="Dispecher">
                 <Text style={STYLES.bold}>{this.props.entity.assigned_dispatcher || "-"}</Text>
-            </Field>
+              </Field>
 
-            <Field label="Bilješke">
-              <ClipboardParams text={(this.props.entity as any)?.notes} />
-            </Field>
+              <Field label="Bilješke">
+                <ClipboardParams text={(this.props.entity as any)?.notes} />
+              </Field>
 
-            <Field label="Izmijenjeno">
-              <Text style={STYLES.bold}>{this.props.entity.updated_at}</Text>
-            </Field>
-          </React.Fragment>}
+              <Field label="Izmijenjeno">
+                <Text style={STYLES.bold}>{this.props.entity.updated_at}</Text>
+              </Field>
+
+              {!!(this.props.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
+                <MapView
+                  mapType="standard"
+                  zoomTapEnabled
+                  zoomControlEnabled
+                  zoomEnabled
+                  showsMyLocationButton={true}
+                  showsUserLocation={true}
+                  //followsUserLocation={true}
+                  style={{ height: 200 }}
+                  initialRegion={{
+                    latitude: (this.props.entity.locationLat || 0),
+                    longitude: (this.props.entity.locationLon || 0),
+                    latitudeDelta: 1,
+                    longitudeDelta: 1,
+                  }}
+                >
+                  <Marker
+                    key={`aidreq_${this.props.entity.id}`}
+                    coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon, } as LatLng}
+                    pinColor={"red"}
+                  />
+                </MapView>
+              )}
+            </React.Fragment>
+          )}
 
           {/*
           {!!this.props.entity.comments && <React.Fragment>
@@ -103,7 +130,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           */}
 
           <TouchableOpacity onPress={this.callbackOnMore}>
-            <Text style={{color: "brown"}}>{this.state.short ? "Show more" : "Show less"}</Text>
+            <Text style={{ color: "brown" }}>{this.state.short ? "Show more" : "Show less"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -156,16 +183,20 @@ class ClipboardParams extends React.PureComponent<ClipboardTextParams> {
   }
 
   render() {
-    return <View style={{flexDirection: "row"}}>
-      <View style={{flex: 1}}>
-        <Text style={{ fontWeight: "bold", fontStyle: "italic", color: this.props.onTextClick || this.props.entity ? "blue" : undefined }} onPress={this.callbackOnTextPress} >{this.props.text || "[empty]"}</Text>
+    return (
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontWeight: "bold", fontStyle: "italic", color: this.props.onTextClick || this.props.entity ? "blue" : undefined }} onPress={this.callbackOnTextPress}>
+            {this.props.text || "[empty]"}
+          </Text>
+        </View>
+        <View style={{ width: 30, flexDirection: "column" }}>
+          <TouchableOpacity onPress={this.callbackOnShare}>
+            <Image style={{ opacity: 0.5, marginHorizontal: 5 }} source={CONTENT_COPY_24PX} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={{width: 30, flexDirection: "column"}}>
-        <TouchableOpacity onPress={this.callbackOnShare}>
-          <Image style={{opacity: 0.5, marginHorizontal: 5}} source={CONTENT_COPY_24PX} />
-        </TouchableOpacity>
-      </View>
-    </View>
+    );
   }
 }
 
@@ -173,21 +204,21 @@ interface FieldProps {
   label: string;
 }
 class Field extends React.PureComponent<FieldProps> {
+  constructor(props: FieldProps) {
+    super(props);
+  }
 
-    constructor(props: FieldProps) {
-        super(props);
-    }
-
-    render() {
-      return (
-            <React.Fragment>
-              <View style={{ margin: 5 }}></View>
-              <Text style={{ fontSize: 12 }}>{this.props.label}:</Text>
-              {this.props.children}
-            </React.Fragment>);
-      }
+  render() {
+    return (
+      <React.Fragment>
+        <View style={{ margin: 5 }}></View>
+        <Text style={{ fontSize: 12 }}>{this.props.label}:</Text>
+        {this.props.children}
+      </React.Fragment>
+    );
+  }
 }
 
 const STYLES = StyleSheet.create({
-  bold: { fontWeight: "bold" } as TextStyle
-})
+  bold: { fontWeight: "bold" } as TextStyle,
+});

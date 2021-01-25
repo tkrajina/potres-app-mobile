@@ -11,5 +11,5 @@ export interface ScreenProps {
 export enum EntityType {
   ACCOMODATIONS = "Smještaji / Usluge",
   AID_COLLECTION = "Prikupi donacija",
-  AID_REQUEST = "Tražim pomoć"
+  AID_REQUEST = "Tražim pomoć",
 }
