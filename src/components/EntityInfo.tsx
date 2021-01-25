@@ -1,10 +1,7 @@
 import { default as React } from "react";
-import { Linking, ScrollView, Text, View, Image, Share, Alert } from "react-native";
-import { TouchableHighlight, TouchableOpacity } from "react-native-gesture-handler";
-import { LINK_24PX, SHARE_24PX } from "../images_generated";
-import { Accommodations } from "../models/Accommodations";
-import { AidCollection } from "../models/AidCollection";
-import { AidRequest } from "../models/AidRequest";
+import { Image, Linking, ScrollView, Share, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { SHARE_24PX } from "../images_generated";
 import { Entity } from "../models/entities";
 import { EntityType } from "../screens/common";
 import * as Toasts from "../utils/toasts";
@@ -13,7 +10,9 @@ import * as Utils from "../utils/utils";
 interface EntityInfoProps {
   entity: Entity;
 }
-class EntityInfoState {}
+class EntityInfoState {
+  short: boolean = true;
+}
 export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoState> {
   constructor(props: EntityInfoProps) {
     super(props);
@@ -34,7 +33,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
       <ScrollView>
         <View style={{ flexDirection: "column", margin: 10 }}>
           <Text style={{ fontSize: 12 }}>Opis:</Text>
-          <ShareableText text={this.props.entity.description} entity={this.props.entity} />
+          <ShareableText text={this.state.short ? this.props.entity.description?.substr(0, 50) + "..." : this.props.entity.description} entity={this.props.entity} />
 
           {!!this.props.entity.contact_name && (
             <React.Fragment>
