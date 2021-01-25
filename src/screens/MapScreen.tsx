@@ -59,7 +59,7 @@ export default class MapScreen extends React.Component<ScreenProps, State> {
     );
 
     return (
-      <AppScreenView navigation={this.props.navigation} title="Potres 2020">
+      <AppScreenView navigation={this.props.navigation} title="Potres.app">
         {/*
         {this.state.aidRequests?.map(ar => <AppText>{ar.description} {ar.locationLat},{ar.locationLon}</AppText>)}
         <Text>{JSON.stringify(this.state.aidRequests)}</Text>

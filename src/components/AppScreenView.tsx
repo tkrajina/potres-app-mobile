@@ -1,7 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import { default as React } from "react";
-import { Platform, StatusBar, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { Image, Platform, StatusBar, StyleSheet, Text, View, ViewStyle, SafeAreaView } from "react-native";
 import { Routes } from "../routes";
 import { stores } from "../stores/RootStore";
 import { CleanupContainer } from "../utils/cleanup";
@@ -71,7 +70,7 @@ export class AppScreenView extends React.Component<AppScreenViewProps, AppScreen
         <View
           style={[
             {
-              height: 40,
+              height: 50,
               paddingHorizontal: 10,
               flexDirection: "row",
               borderBottomWidth: 1,
@@ -80,10 +79,11 @@ export class AppScreenView extends React.Component<AppScreenViewProps, AppScreen
             },
           ]}
         >
+          <Image source={require("../../assets/in_app_icon.png")} style={{width: 45, height: 45}} />
           <Text
             style={{
-              paddingLeft: 10,
-              paddingTop: 6,
+              marginTop: 10,
+              marginLeft: 10,
               alignSelf: "flex-start",
               fontSize: 20,
               color: "#333",
