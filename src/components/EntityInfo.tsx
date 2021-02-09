@@ -46,7 +46,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
       <View>
         {!!(this.state.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
           <Modal>
-            <View style={{flex: 1, marginHorizontal: 10, marginVertical: 50, borderColor: "black", borderWidth: 2}}>
+            <View style={{ flex: 1, marginHorizontal: 10, marginVertical: 50, borderColor: "black", borderWidth: 2 }}>
               <MapView
                 mapType="standard"
                 zoomTapEnabled

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import * as FileSystem from "expo-file-system";
 import { Keyboard, Platform } from "react-native";
-import { Accommodations as Accommodation } from "../models/Accommodations";
+import { Accommodations as Accommodation } from "../models/v1/Accommodations";
 import { AidCollection } from "../models/AidCollection";
 import { AidRequest } from "../models/AidRequest";
 import { Entity } from "../models/entities";

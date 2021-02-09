@@ -1,6 +1,6 @@
 /* Do not change, this code is generated from Golang structs */
 
-import { EntityType } from "../screens/common";
+import { EntityType } from "../../screens/common";
 
 /*
 Example: https://relief-app-backend.herokuapp.com/accommodations
