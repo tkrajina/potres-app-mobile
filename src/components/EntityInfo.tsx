@@ -2,12 +2,11 @@ import { default as React } from "react";
 import { Alert, Button, Image, Linking, Modal, ScrollView, Share, StyleSheet, Text, TextStyle, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CONTENT_COPY_24PX } from "../images_generated";
-import { Entity } from "../models/entities";
-import { EntityType } from "../screens/common";
 import * as Toasts from "../utils/toasts";
 import * as Utils from "../utils/utils";
 import Clipboard from "expo-clipboard";
 import MapView, { LatLng, Marker, Polygon } from "react-native-maps";
+import { Entity } from "../models/v2/models";
 
 interface EntityInfoProps {
   entity: Entity;
@@ -44,7 +43,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
     const end = (this.props.entity as any)?.enddate || "";
     return (
       <View>
-        {!!(this.state.showMap && this.props.entity.locationLat && this.props.entity.locationLon) && (
+        {!!(this.state.showMap && this.props.entity.location_latitude && this.props.entity.location_longitude) && (
           <Modal>
             <View style={{ flex: 1, marginHorizontal: 10, marginVertical: 50, borderColor: "black", borderWidth: 2 }}>
               <MapView
@@ -57,13 +56,13 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
                 //followsUserLocation={true}
                 style={{ flex: 1 }}
                 initialRegion={{
-                  latitude: this.props.entity.locationLat || 0,
-                  longitude: this.props.entity.locationLon || 0,
+                  latitude: this.props.entity.location_latitude || 0,
+                  longitude: this.props.entity.location_longitude || 0,
                   latitudeDelta: 1,
                   longitudeDelta: 1,
                 }}
               >
-                <Marker key={`aidreq_${this.props.entity.id}`} coordinate={{ latitude: this.props.entity.locationLat, longitude: this.props.entity.locationLon } as LatLng} pinColor={"red"} />
+                <Marker key={`aidreq_${this.props.entity.id}`} coordinate={{ latitude: this.props.entity.location_latitude, longitude: this.props.entity.location_longitude } as LatLng} pinColor={"red"} />
               </MapView>
               <Button title="Zatvori" onPress={this.callbackOnMap} />
             </View>
@@ -86,7 +85,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           </Field>
 
           <Field label="Dobrovoljac označio kao završeno">
-            <Text style={STYLES.bold}>{this.props.entity.volunteerMarkedAsDone || "-"}</Text>
+            <Text style={STYLES.bold}>{this.props.entity.done || "-"}</Text>
           </Field>
 
           {!!this.props.entity.tags && (
@@ -109,8 +108,12 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
                 </Field>
               )}
 
-              <Field label="Dispecher">
-                <Text style={STYLES.bold}>{this.props.entity.assigned_dispatcher || "-"}</Text>
+              <Field label="Coordinator assigned">
+                <Text style={STYLES.bold}>{this.props.entity.assigned_coordinator || "-"}</Text>
+              </Field>
+
+              <Field label="Volunteer assigned">
+                <Text style={STYLES.bold}>{this.props.entity.volunteer_assigned || "-"}</Text>
               </Field>
 
               <Field label="Bilješke">
@@ -136,7 +139,7 @@ export class EntityInfo extends React.PureComponent<EntityInfoProps, EntityInfoS
           <TouchableOpacity onPress={this.callbackOnMore}>
             <Text style={{ color: "brown" }}>{this.state.short ? "Show more" : "Show less"}</Text>
           </TouchableOpacity>
-          {this.props.entity.locationLat && this.props.entity.locationLon && (
+          {this.props.entity.location_latitude && this.props.entity.location_longitude && (
             <TouchableOpacity onPress={this.callbackOnMap}>
               <Text style={{ color: "brown" }}>Prikaži kartu</Text>
             </TouchableOpacity>
@@ -172,19 +175,8 @@ class ClipboardParams extends React.PureComponent<ClipboardTextParams> {
     if (this.props.onTextClick) {
       this.props.onTextClick();
     } else if (this.props.entity) {
-      let baseUrl = "https://potres.app";
       try {
-        if (this.props.entity?.type === EntityType.AID_COLLECTION) {
-          baseUrl += `/prikup-donacija/${this.props.entity?.id}`;
-        } else if (this.props.entity?.type === EntityType.ACCOMODATIONS) {
-          baseUrl += `/smjestaj/${this.props.entity?.id}`;
-        } else if (this.props.entity?.type === EntityType.AID_REQUEST) {
-          baseUrl += `/trazim-pomoc/${this.props.entity?.id}`;
-        } else {
-          console.error("Invalid type " + JSON.stringify(this.props.entity.type));
-          return;
-        }
-        await Linking.openURL(baseUrl);
+        await Linking.openURL(`https://potres.app/TODO/${this.props.entity?.id}`);
       } catch (e) {
         console.error(e);
       }

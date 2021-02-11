@@ -40,18 +40,7 @@ export default class SearchScreen extends React.Component<ScreenProps, State> {
 
   async searchAsync() {
     const str = this.state.searchString?.toLowerCase();
-    let list: Entity[] = [];
-    switch (this.state.type) {
-      case EntityType.ACCOMODATIONS:
-        list = stores.accomodations.get().filter((a) => a.description.toLowerCase().indexOf(str) >= 0);
-        break;
-      case EntityType.AID_COLLECTION:
-        list = stores.aidCollections.get().filter((a) => a.description.toLowerCase().indexOf(str) >= 0);
-        break;
-      case EntityType.AID_REQUEST:
-        list = stores.aidRequests.get().filter((a) => a.description.toLowerCase().indexOf(str) >= 0);
-        break;
-    }
+    let list: Entity[] = stores.entities.get().filter((a) => a.description.toLowerCase().indexOf(str) >= 0);
     this.setState({
       entities: list,
       searching: false,

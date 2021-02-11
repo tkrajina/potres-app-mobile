@@ -7,9 +7,3 @@ export interface ScreenProps {
   navigation: StackNavigationProp<any, any>;
   route: NavigationRoute;
 }
-
-export enum EntityType {
-  ACCOMODATIONS = "Smještaji / Usluge",
-  AID_COLLECTION = "Prikupi donacija",
-  AID_REQUEST = "Tražim pomoć",
-}

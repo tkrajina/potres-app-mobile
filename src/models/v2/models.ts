@@ -57,7 +57,7 @@ export interface Category {
 */
 }
 
-export interface Entry {
+export interface Entity {
   id: number;
   title: string;
   location: string;
@@ -72,7 +72,7 @@ export interface Entry {
   status: any;
   assigned_coordinator: any;
   volunteer_assigned: any;
-  done: false;
+  done: boolean;
   follow_up_date: any;
   tags: string;
   date_from: any;

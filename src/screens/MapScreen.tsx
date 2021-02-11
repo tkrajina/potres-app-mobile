@@ -11,7 +11,7 @@ import * as Utils from "../utils/utils";
 import { EntityType, ScreenProps } from "./common";
 
 class State {
-  aidRequests = stores.aidRequests;
+  aidRequests = stores.entities;
   accomodations = stores.accomodations;
   aidCollections = stores.aidCollections;
   selected: Entity | undefined;
